@@ -31,14 +31,31 @@ jobs:
       - name: Run Semgrep
         run: |
           python3 -m pip install semgrep
-          semgrep scan --config auto --json --output semgrep-report.json --error
+
+          set +e
+          semgrep scan \
+            --config auto \
+            --json \
+            --output semgrep-report.json \
+            --error
+
+          SEMGREP_EXIT_CODE=$?
+
+          set -e
+
+          echo "Semgrep exit code: $SEMGREP_EXIT_CODE"
+
           python3 semgrep_to_html.py
 
-      - name: Upload Semgrep report
+          echo "Semgrep HTML report generated."
+
+          exit $SEMGREP_EXIT_CODE
+
+      - name: Upload Semgrep reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report
+          name: semgrep-reports
           path: |
             semgrep-report.json
             semgrep-report.html
