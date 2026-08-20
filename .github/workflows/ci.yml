@@ -31,6 +31,7 @@ jobs:
       - name: Run Semgrep
         run: |
           python3 -m pip install semgrep
+
           semgrep scan \
             --config auto \
             --json \
@@ -39,7 +40,7 @@ jobs:
           python3 semgrep_to_html.py
 
           echo "Semgrep scan completed."
-          echo "HTML and JSON reports generated."
+          echo "Semgrep HTML and JSON reports generated."
 
       - name: Upload Semgrep reports
         if: always()
@@ -50,20 +51,31 @@ jobs:
             semgrep-report.json
             semgrep-report.html
 
+      - name: Download OWASP Dependency-Check
+        run: |
+          VERSION=$(curl -s https://dependency-check.github.io/DependencyCheck/current.txt)
+
+          echo "Installing Dependency-Check version: $VERSION"
+
+          curl -Ls \
+            "https://github.com/dependency-check/DependencyCheck/releases/download/v${VERSION}/dependency-check-${VERSION}-release.zip" \
+            -o dependency-check.zip
+
+          unzip -q dependency-check.zip
+
       - name: Run OWASP Dependency-Check
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          project: 'Java Application'
-          path: '.'
-          format: 'HTML'
-          out: 'dependency-check-report'
-          args: >
-            --scan .
+        run: |
+          ./dependency-check/bin/dependency-check.sh \
+            --project "Java Application" \
+            --scan . \
+            --format HTML \
+            --format JSON \
+            --out dependency-check-report \
             --enableRetired
 
-      - name: Upload Dependency-Check report
+      - name: Upload Dependency-Check reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-check-report
-          path: dependency-check-report
+          name: dependency-check-reports
+          path: dependency-check-report/
