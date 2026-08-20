@@ -65,6 +65,8 @@ jobs:
 
       - name: Run OWASP Dependency-Check
         run: |
+          mkdir -p dependency-check-report
+
           ./dependency-check/bin/dependency-check.sh \
             --project "Java Application" \
             --scan . \
