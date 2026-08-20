@@ -31,24 +31,15 @@ jobs:
       - name: Run Semgrep
         run: |
           python3 -m pip install semgrep
-
-          set +e
           semgrep scan \
             --config auto \
             --json \
-            --output semgrep-report.json \
-
-          SEMGREP_EXIT_CODE=$?
-
-          set -e
-
-          echo "Semgrep exit code: $SEMGREP_EXIT_CODE"
+            --output semgrep-report.json
 
           python3 semgrep_to_html.py
 
-          echo "Semgrep HTML report generated."
-
-          exit $SEMGREP_EXIT_CODE
+          echo "Semgrep scan completed."
+          echo "HTML and JSON reports generated."
 
       - name: Upload Semgrep reports
         if: always()
@@ -58,3 +49,21 @@ jobs:
           path: |
             semgrep-report.json
             semgrep-report.html
+
+      - name: Run OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Java Application'
+          path: '.'
+          format: 'HTML'
+          out: 'dependency-check-report'
+          args: >
+            --scan .
+            --enableRetired
+
+      - name: Upload Dependency-Check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: dependency-check-report
