@@ -32,10 +32,13 @@ jobs:
         run: |
           python3 -m pip install semgrep
           semgrep scan --config auto --json --output semgrep-report.json --error
+          python3 semgrep_to_html.py
 
       - name: Upload Semgrep report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-report
-          path: semgrep-report.json
+          path: |
+            semgrep-report.json
+            semgrep-report.html
