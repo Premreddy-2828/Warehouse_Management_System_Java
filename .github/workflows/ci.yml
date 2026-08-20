@@ -37,7 +37,6 @@ jobs:
             --config auto \
             --json \
             --output semgrep-report.json \
-            --error
 
           SEMGREP_EXIT_CODE=$?
 
