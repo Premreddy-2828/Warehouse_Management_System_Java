@@ -16,4 +16,5 @@ public class StorageMaterialMapping {
     private Long storageId;
 
     private Long materialId;
+
 }
