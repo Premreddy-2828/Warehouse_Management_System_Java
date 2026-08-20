@@ -27,3 +27,8 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw clean package -DskipTests
+
+      - name: Run Semgrep
+        run: |
+          python3 -m pip install semgrep
+          semgrep scan --config auto
