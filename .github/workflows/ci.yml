@@ -64,6 +64,8 @@ jobs:
           unzip -q dependency-check.zip
 
       - name: Run OWASP Dependency-Check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           mkdir -p dependency-check-report
 
@@ -73,6 +75,7 @@ jobs:
             --format HTML \
             --format JSON \
             --out dependency-check-report \
+            --nvdApiKey "$NVD_API_KEY" \
             --enableRetired
 
       - name: Upload Dependency-Check reports
