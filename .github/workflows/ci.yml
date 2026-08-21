@@ -48,6 +48,7 @@ jobs:
             --config auto \
             --json \
             --output semgrep-report.json
+            --error
 
           python3 semgrep_to_html.py
 
