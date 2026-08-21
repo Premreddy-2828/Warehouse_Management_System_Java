@@ -14,20 +14,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # ----------------------------------------
+      # 1. Checkout source code
+      # ----------------------------------------
       - name: Checkout code
         uses: actions/checkout@v5
 
+      # ----------------------------------------
+      # 2. Setup Java
+      # ----------------------------------------
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      # ----------------------------------------
+      # 3. Build application
+      # ----------------------------------------
       - name: Build application
         run: |
           chmod +x mvnw
           ./mvnw clean package -DskipTests
 
+      # ----------------------------------------
+      # 4. Run Semgrep
+      # ----------------------------------------
       - name: Run Semgrep
         run: |
           python3 -m pip install semgrep
@@ -40,8 +52,10 @@ jobs:
           python3 semgrep_to_html.py
 
           echo "Semgrep scan completed."
-          echo "Semgrep HTML and JSON reports generated."
 
+      # ----------------------------------------
+      # 5. Upload Semgrep reports
+      # ----------------------------------------
       - name: Upload Semgrep reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,6 +65,9 @@ jobs:
             semgrep-report.json
             semgrep-report.html
 
+      # ----------------------------------------
+      # 6. Download OWASP Dependency-Check
+      # ----------------------------------------
       - name: Download OWASP Dependency-Check
         run: |
           VERSION=$(curl -s https://dependency-check.github.io/DependencyCheck/current.txt)
@@ -63,11 +80,26 @@ jobs:
 
           unzip -q dependency-check.zip
 
+      # ----------------------------------------
+      # 7. Cache Dependency-Check database
+      # ----------------------------------------
+      - name: Cache Dependency-Check database
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check
+          key: ${{ runner.os }}-dependency-check-v1
+          restore-keys: |
+            ${{ runner.os }}-dependency-check-
+
+      # ----------------------------------------
+      # 8. Run OWASP Dependency-Check
+      # ----------------------------------------
       - name: Run OWASP Dependency-Check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           mkdir -p dependency-check-report
+          mkdir -p ~/.dependency-check
 
           ./dependency-check/bin/dependency-check.sh \
             --project "Java Application" \
@@ -75,9 +107,13 @@ jobs:
             --format HTML \
             --format JSON \
             --out dependency-check-report \
+            --data ~/.dependency-check \
             --nvdApiKey "$NVD_API_KEY" \
             --enableRetired
 
+      # ----------------------------------------
+      # 9. Upload Dependency-Check reports
+      # ----------------------------------------
       - name: Upload Dependency-Check reports
         if: always()
         uses: actions/upload-artifact@v4
