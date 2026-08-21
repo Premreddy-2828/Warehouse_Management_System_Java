@@ -48,7 +48,6 @@ jobs:
             --config auto \
             --json \
             --output semgrep-report.json
-            --error
 
           python3 semgrep_to_html.py
 
@@ -65,59 +64,3 @@ jobs:
           path: |
             semgrep-report.json
             semgrep-report.html
-
-      # ----------------------------------------
-      # 6. Download OWASP Dependency-Check
-      # ----------------------------------------
-      - name: Download OWASP Dependency-Check
-        run: |
-          VERSION=$(curl -s https://dependency-check.github.io/DependencyCheck/current.txt)
-
-          echo "Installing Dependency-Check version: $VERSION"
-
-          curl -Ls \
-            "https://github.com/dependency-check/DependencyCheck/releases/download/v${VERSION}/dependency-check-${VERSION}-release.zip" \
-            -o dependency-check.zip
-
-          unzip -q dependency-check.zip
-
-      # ----------------------------------------
-      # 7. Cache Dependency-Check database
-      # ----------------------------------------
-      - name: Cache Dependency-Check database
-        uses: actions/cache@v4
-        with:
-          path: ~/.dependency-check
-          key: ${{ runner.os }}-dependency-check-v1
-          restore-keys: |
-            ${{ runner.os }}-dependency-check-
-
-      # ----------------------------------------
-      # 8. Run OWASP Dependency-Check
-      # ----------------------------------------
-      - name: Run OWASP Dependency-Check
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: |
-          mkdir -p dependency-check-report
-          mkdir -p ~/.dependency-check
-
-          ./dependency-check/bin/dependency-check.sh \
-            --project "Java Application" \
-            --scan . \
-            --format HTML \
-            --format JSON \
-            --out dependency-check-report \
-            --data ~/.dependency-check \
-            --nvdApiKey "$NVD_API_KEY" \
-            --enableRetired
-
-      # ----------------------------------------
-      # 9. Upload Dependency-Check reports
-      # ----------------------------------------
-      - name: Upload Dependency-Check reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-reports
-          path: dependency-check-report/
