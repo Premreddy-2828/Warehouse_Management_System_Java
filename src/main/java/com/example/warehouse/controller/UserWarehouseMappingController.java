@@ -1,5 +1,7 @@
 package com.example.warehouse.controller;
 
+
+import com.example.warehouse.entity.Users;
 import com.example.warehouse.mapping.UserWarehouseMapping;
 import com.example.warehouse.service.UserWarehouseMappingService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,26 @@ public class UserWarehouseMappingController {
 
         return ResponseEntity.ok(
                 mappingService.getMappingById(id)
+        );
+    }
+
+    // GET MAPPINGS BY WAREHOUSE
+    @GetMapping("/warehouse/{warehouseId}")
+    public ResponseEntity<List<UserWarehouseMapping>> getMappingsByWarehouse(
+            @PathVariable Long warehouseId) {
+
+        return ResponseEntity.ok(
+                mappingService.getMappingsByWarehouse(warehouseId)
+        );
+    }
+
+    // GET USERS BY WAREHOUSE
+    @GetMapping("/warehouse/{warehouseId}/users")
+    public ResponseEntity<List<Users>> getUsersByWarehouse(
+            @PathVariable Long warehouseId) {
+
+        return ResponseEntity.ok(
+                mappingService.getUsersByWarehouse(warehouseId)
         );
     }
 
