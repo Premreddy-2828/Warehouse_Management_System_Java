@@ -1,5 +1,6 @@
 package com.example.warehouse.controller;
 
+import com.example.warehouse.entity.Material;
 import com.example.warehouse.mapping.StorageMaterialMapping;
 import com.example.warehouse.service.StorageMaterialMappingService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,14 @@ import java.util.List;
 public class StorageMaterialMappingController {
 
     private final StorageMaterialMappingService mappingService;
+    private final StorageMaterialMappingService storageMaterialMappingService;
+
+    @GetMapping("/storage/{storageId}/available-capacity")
+    public ResponseEntity<?> getAvailableCapacity(@PathVariable Long storageId) {
+        return ResponseEntity.ok(
+                storageMaterialMappingService.getAvailableCapacity(storageId)
+        );
+    }
 
     // CREATE
     @PostMapping
@@ -41,6 +50,14 @@ public class StorageMaterialMappingController {
 
         return ResponseEntity.ok(
                 mappingService.getMappingById(id)
+        );
+    }
+    @GetMapping("/storage/{storageId}/materials")
+    public ResponseEntity<List<Material>> getMaterialsByStorage(
+            @PathVariable Long storageId) {
+
+        return ResponseEntity.ok(
+                storageMaterialMappingService.getMaterialsByStorage(storageId)
         );
     }
 

@@ -1,6 +1,7 @@
 package com.example.warehouse.controller;
 
 import com.example.warehouse.entity.Material;
+import com.example.warehouse.entity.Warehouse;
 import com.example.warehouse.mapping.WarehouseMaterialMapping;
 import com.example.warehouse.service.WarehouseMaterialMappingService;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,14 @@ public class WarehouseMaterialMappingController {
 
         return ResponseEntity.ok(
                 mappingService.getMaterialsByWarehouse(warehouseId)
+        );
+    }
+    @GetMapping("/material/{materialId}/warehouses")
+    public ResponseEntity<List<Warehouse>> getWarehousesByMaterial(
+            @PathVariable Long materialId) {
+
+        return ResponseEntity.ok(
+                mappingService.getWarehousesByMaterial(materialId)
         );
     }
 

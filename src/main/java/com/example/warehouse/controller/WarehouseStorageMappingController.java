@@ -43,6 +43,14 @@ public class WarehouseStorageMappingController {
                 mappingService.getMappingById(id)
         );
     }
+    @GetMapping("/warehouse/{warehouseId}/storages")
+    public ResponseEntity<List<Long>> getStorageIdsByWarehouse(
+            @PathVariable Long warehouseId) {
+
+        return ResponseEntity.ok(
+                mappingService.getStorageIdsByWarehouse(warehouseId)
+        );
+    }
 
     // UPDATE
     @PutMapping("/{id}")

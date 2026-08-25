@@ -1,9 +1,11 @@
 package com.example.warehouse.service;
 
 import com.example.warehouse.entity.Material;
+import com.example.warehouse.entity.Warehouse;
 import com.example.warehouse.mapping.WarehouseMaterialMapping;
 import com.example.warehouse.repository.MaterialRepository;
 import com.example.warehouse.repository.WarehouseMaterialMappingRepository;
+import com.example.warehouse.repository.WarehouseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ public class WarehouseMaterialMappingService {
 
     private final WarehouseMaterialMappingRepository mappingRepository;
     private final MaterialRepository materialRepository;
+    private final WarehouseRepository warehouseRepository;
 
     // CREATE MAPPING
     public WarehouseMaterialMapping createMapping(
@@ -58,6 +61,21 @@ public class WarehouseMaterialMappingService {
                                 new RuntimeException(
                                         "Material not found with id: "
                                                 + mapping.getMaterialId()
+                                )))
+                .toList();
+    }
+    // GET WAREHOUSE DETAILS BY MATERIAL
+    public List<Warehouse> getWarehousesByMaterial(Long materialId) {
+
+        List<WarehouseMaterialMapping> mappings =
+                mappingRepository.findByMaterialId(materialId);
+
+        return mappings.stream()
+                .map(mapping -> warehouseRepository.findById(mapping.getWarehouseId())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Warehouse not found with id: "
+                                                + mapping.getWarehouseId()
                                 )))
                 .toList();
     }

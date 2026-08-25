@@ -27,6 +27,7 @@ public class StorageService {
 
         return storageMapper.toDTO(savedStorage);
     }
+
     public List<StorageDTO> getAllStorages() {
 
         List<Storage> storages = storageRepository.findAll();
@@ -35,6 +36,7 @@ public class StorageService {
                 .map(storageMapper::toDTO)
                 .toList();
     }
+
     public StorageDTO getStorageById(Long id) {
 
         Storage storage = storageRepository.findById(id)
@@ -42,8 +44,8 @@ public class StorageService {
 
         return storageMapper.toDTO(storage);
     }
-    public StorageDTO updateStorage(Long id, StorageDTO storageDTO)
-    {
+
+    public StorageDTO updateStorage(Long id, StorageDTO storageDTO) {
 
         Storage storage = storageRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Storage not found with id: " + id));
@@ -61,6 +63,7 @@ public class StorageService {
 
         return storageMapper.toDTO(updatedStorage);
     }
+
     public void deleteStorage(Long id) {
 
         Storage storage = storageRepository.findById(id)

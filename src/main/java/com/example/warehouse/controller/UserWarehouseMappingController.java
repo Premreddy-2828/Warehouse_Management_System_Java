@@ -65,6 +65,14 @@ public class UserWarehouseMappingController {
                 mappingService.getUsersByWarehouse(warehouseId)
         );
     }
+    @GetMapping("/user/{userId}/warehouses")
+    public ResponseEntity<List<Long>> getWarehouseIdsByUser(
+            @PathVariable Long userId) {
+
+        return ResponseEntity.ok(
+                mappingService.getWarehouseIdsByUser(userId)
+        );
+    }
 
     // UPDATE
     @PutMapping("/{id}")

@@ -35,6 +35,17 @@ public class WarehouseStorageMappingService {
                                 "Warehouse-Storage mapping not found with id: " + id
                         ));
     }
+    // GET STORAGE IDS BY WAREHOUSE
+    public List<Long> getStorageIdsByWarehouse(Long warehouseId) {
+
+        List<WarehouseStorageMapping> mappings =
+                mappingRepository.findByWarehouseId(warehouseId);
+
+        return mappings.stream()
+                .map(WarehouseStorageMapping::getStorageId)
+                .distinct()
+                .toList();
+    }
 
     // UPDATE
     public WarehouseStorageMapping updateMapping(

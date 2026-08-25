@@ -62,6 +62,16 @@ public class UserWarehouseMappingService {
         // 3. Get actual users
         return userRepository.findByIdIn(userIds);
     }
+    public List<Long> getWarehouseIdsByUser(Long userId) {
+
+        List<UserWarehouseMapping> mappings =
+                mappingRepository.findByUserId(userId);
+
+        return mappings.stream()
+                .map(UserWarehouseMapping::getWarehouseId)
+                .distinct()
+                .toList();
+    }
 
     // UPDATE MAPPING
     public UserWarehouseMapping updateMapping(

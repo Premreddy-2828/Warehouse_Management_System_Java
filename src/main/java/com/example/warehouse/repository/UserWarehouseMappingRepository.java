@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface UserWarehouseMappingRepository
         extends JpaRepository<UserWarehouseMapping, Long> {
+
     List<UserWarehouseMapping> findByWarehouseId(Long warehouseId);
+
+    List<UserWarehouseMapping> findByUserId(Long userId);
 }
